@@ -24,17 +24,17 @@
 [![](https://jitpack.io/v/czy1121/update.svg)](https://jitpack.io/#czy1121/update)
 
 ``` groovy
-repositories { 
+repositories {
     maven { url "https://jitpack.io" }
-} 
+}
 
 dependencies {
     compile 'com.github.czy1121:update:1.1.1'
 }
 ```
-    
+
 ## Usage
-  
+
 
 **基本用法**
 
@@ -42,16 +42,16 @@ dependencies {
 package/version 从应用的 context 获取
 
 ``` java
-// 设置默认更新接口地址与渠道 
+// 设置默认更新接口地址与渠道
 UpdateManager.setUrl(mCheckUrl, "yyb");
-``` 
+```
 
 ``` java
 // 进入应用时查询更新
 UpdateManager.check(context);
-``` 
+```
 
-``` java 
+``` java
 // 在设置界面点击检查更新
 UpdateManager.checkManual(context);
 ```
@@ -83,7 +83,7 @@ UpdateManager.create(this).setUrl(mCheckUrl).setPostData("param=abc&param2=xyz")
 
 查询结果需要解析成 UpdateInfo
 
-``` java 
+``` java
 public class UpdateInfo {
     // 是否有新版本
     public boolean hasUpdate = false;
@@ -95,11 +95,11 @@ public class UpdateInfo {
     public boolean isAutoInstall = true;
     // 是否可忽略该版本
     public boolean isIgnorable = true;
-    
+
     public int versionCode;
     public String versionName;
     public String updateContent;
-    
+
     public String url;
     public String md5;
     public long size;
@@ -121,7 +121,7 @@ public class UpdateInfo {
 UpdateManager.create(this).setUrl(mCheckUrl).setParser(new IUpdateParser() {
     @Override
     public UpdateInfo parse(String source) throws Exception {
-        UpdateInfo info = new UpdateInfo(); 
+        UpdateInfo info = new UpdateInfo();
         // todo
         return info;
     }
@@ -195,13 +195,13 @@ UpdateManager.create(this).setOnFailure(new OnFailureListener() {
 
 可在通知栏显示下载进度，当 info.isSilent 为 true 显示
 
-默认通知栏进度 
+默认通知栏进度
 
 ``` java
 UpdateManager.create(this).setNotifyId(998).check();
 ```
 
-定制通知栏进度 
+定制通知栏进度
 
 ``` java
 UpdateManager.create(this).setOnNotificationDownloadListener(new OnDownloadListener() {
@@ -242,6 +242,107 @@ UpdateManager.create(this).setOnDownloadListener(new OnDownloadListener() {
     }
 }).check();
 ```
+**国际化**
+
+启动时调用此初始化方法
+``` java
+private void initUpdateResource() {
+    SparseArray<String> messages = UpdateError.messages;
+    messages.put(UpdateError.UPDATE_IGNORED, getString(R.string.UP_UPDATE_IGNORED));
+    messages.put(UpdateError.UPDATE_NO_NEWER, getString(R.string.UP_UPDATE_NO_NEWER));
+    messages.put(UpdateError.CHECK_UNKNOWN, getString(R.string.UP_CHECK_UNKNOWN));
+    messages.put(UpdateError.CHECK_NO_WIFI, getString(R.string.UP_CHECK_NO_WIFI));
+    messages.put(UpdateError.CHECK_NO_NETWORK, getString(R.string.UP_CHECK_NO_NETWORK));
+    messages.put(UpdateError.CHECK_NETWORK_IO, getString(R.string.UP_CHECK_NETWORK_IO));
+    messages.put(UpdateError.CHECK_HTTP_STATUS, getString(R.string.UP_CHECK_HTTP_STATUS));
+    messages.put(UpdateError.CHECK_PARSE, getString(R.string.UP_CHECK_PARSE));
+    messages.put(UpdateError.DOWNLOAD_UNKNOWN, getString(R.string.UP_DOWNLOAD_UNKNOWN));
+    messages.put(UpdateError.DOWNLOAD_CANCELLED, getString(R.string.UP_DOWNLOAD_CANCELLED));
+    messages.put(UpdateError.DOWNLOAD_DISK_NO_SPACE, getString(R.string.UP_DOWNLOAD_DISK_NO_SPACE));
+    messages.put(UpdateError.DOWNLOAD_DISK_IO, getString(R.string.UP_DOWNLOAD_DISK_IO));
+    messages.put(UpdateError.DOWNLOAD_NETWORK_IO, getString(R.string.UP_DOWNLOAD_NETWORK_IO));
+    messages.put(UpdateError.DOWNLOAD_NETWORK_BLOCKED, getString(R.string.UP_DOWNLOAD_NETWORK_BLOCKED));
+    messages.put(UpdateError.DOWNLOAD_NETWORK_TIMEOUT, getString(R.string.UP_DOWNLOAD_NETWORK_TIMEOUT));
+    messages.put(UpdateError.DOWNLOAD_HTTP_STATUS, getString(R.string.UP_DOWNLOAD_HTTP_STATUS));
+    messages.put(UpdateError.DOWNLOAD_INCOMPLETE, getString(R.string.UP_DOWNLOAD_INCOMPLETE));
+    messages.put(UpdateError.DOWNLOAD_VERIFY, getString(R.string.UP_DOWNLOAD_VERIFY));
+
+    UpdateAgent.UP_DESC = getString(R.string.UP_DESC);
+    UpdateAgent.UP_TITLE = getString(R.string.UP_TITLE);
+    UpdateAgent.UP_FORCE_INFO = getString(R.string.UP_FORCE_INFO);
+    UpdateAgent.UP_CONFIRM = getString(R.string.UP_CONFIRM);
+    UpdateAgent.UP_IMMEDIATE = getString(R.string.UP_IMMEDIATE);
+    UpdateAgent.UP_LATER = getString(R.string.UP_LATER);
+    UpdateAgent.UP_IGNORE = getString(R.string.UP_IGNORE);
+    UpdateAgent.UP_DOWNLOADING = getString(R.string.UP_DOWNLOADING);
+    UpdateAgent.UP_DOWN_TITLE = getString(R.string.UP_DOWN_TITLE);
+}
+```
+
+zh-rCN/strings.xml
+
+``` xml
+<string name="UP_UPDATE_IGNORED">该版本已经忽略</string>
+<string name="UP_UPDATE_NO_NEWER">已经是最新版了</string>
+<string name="UP_CHECK_UNKNOWN">查询更新失败：未知错误</string>
+<string name="UP_CHECK_NO_WIFI">查询更新失败：没有 WIFI</string>
+<string name="UP_CHECK_NO_NETWORK">查询更新失败：没有网络</string>
+<string name="UP_CHECK_NETWORK_IO">查询更新失败：网络异常</string>
+<string name="UP_CHECK_HTTP_STATUS">查询更新失败：错误的HTTP状态</string>
+<string name="UP_CHECK_PARSE">查询更新失败：解析错误</string>
+<string name="UP_DOWNLOAD_UNKNOWN">下载失败：未知错误</string>
+<string name="UP_DOWNLOAD_CANCELLED">下载失败：下载被取消</string>
+<string name="UP_DOWNLOAD_DISK_NO_SPACE">下载失败：磁盘空间不足</string>
+<string name="UP_DOWNLOAD_DISK_IO">下载失败：磁盘读写错误</string>
+<string name="UP_DOWNLOAD_NETWORK_IO">下载失败：网络异常</string>
+<string name="UP_DOWNLOAD_NETWORK_BLOCKED">下载失败：网络中断</string>
+<string name="UP_DOWNLOAD_NETWORK_TIMEOUT">下载失败：网络超时</string>
+<string name="UP_DOWNLOAD_HTTP_STATUS">下载失败：错误的HTTP状态</string>
+<string name="UP_DOWNLOAD_INCOMPLETE">下载失败：下载不完整</string>
+<string name="UP_DOWNLOAD_VERIFY">下载失败：校验错误</string>
+<string name="UP_DESC">最新版本：%1$s\n新版本大小：%2$s\n\n更新内容:\n%3$s</string>
+<string name="UP_TITLE">应用更新</string>
+<string name="UP_FORCE_INFO">您需要更新应用才能继续使用\n\n%s</string>
+<string name="UP_CONFIRM">确定</string>
+<string name="UP_IMMEDIATE">立即更新</string>
+<string name="UP_LATER">以后再说</string>
+<string name="UP_IGNORE">忽略该版</string>
+<string name="UP_DOWNLOADING">下载中...</string>
+<string name="UP_DOWN_TITLE">下载中 - %s</string>
+```
+
+values/strings.xml
+
+``` xml
+<string name="UP_UPDATE_IGNORED">This version was ignored.</string>
+<string name="UP_UPDATE_NO_NEWER">It is the latest version!</string>
+<string name="UP_CHECK_UNKNOWN">Check update failed: unknown error.</string>
+<string name="UP_CHECK_NO_WIFI">Check update failed: no WIFI.</string>
+<string name="UP_CHECK_NO_NETWORK">Check update failed: no network.</string>
+<string name="UP_CHECK_NETWORK_IO">Check update failed: network error.</string>
+<string name="UP_CHECK_HTTP_STATUS">Check update failed: network error.</string>
+<string name="UP_CHECK_PARSE">Check update failed: network error.</string>
+<string name="UP_DOWNLOAD_UNKNOWN">Download failed: unknown error.</string>
+<string name="UP_DOWNLOAD_CANCELLED">Download failed: user canceled.</string>
+<string name="UP_DOWNLOAD_DISK_NO_SPACE">Download failed: no enough disk space.</string>
+<string name="UP_DOWNLOAD_DISK_IO">Download failed: disk write error.</string>
+<string name="UP_DOWNLOAD_NETWORK_IO">Download failed: network error.</string>
+<string name="UP_DOWNLOAD_NETWORK_BLOCKED">Download failed: network error.</string>
+<string name="UP_DOWNLOAD_NETWORK_TIMEOUT">Download failed: network timeout.</string>
+<string name="UP_DOWNLOAD_HTTP_STATUS">Download failed: network error.</string>
+<string name="UP_DOWNLOAD_INCOMPLETE">Download failed: download is incomplete.</string>
+<string name="UP_DOWNLOAD_VERIFY">Download failed: verification error.</string>
+<string name="UP_DESC">Current Version：%1$s\nSize：%2$s\n\nUpdate:\n%3$s</string>
+<string name="UP_TITLE">APP Update</string>
+<string name="UP_FORCE_INFO">You need to update your app to continue\n\n%s</string>
+<string name="UP_CONFIRM">Confirm</string>
+<string name="UP_IMMEDIATE">Update Now</string>
+<string name="UP_LATER">Remind Me Later</string>
+<string name="UP_IGNORE">Ignore This Version</string>
+<string name="UP_DOWNLOADING">Downloading...</string>
+<string name="UP_DOWN_TITLE">Downloading - %s</string>
+```
+
 
 ## License
 

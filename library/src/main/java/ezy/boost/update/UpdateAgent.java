@@ -16,6 +16,8 @@
 
 package ezy.boost.update;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -23,16 +25,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.NotificationCompat;
 import android.text.format.Formatter;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-
-class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
+public class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
 
     private Context mContext;
     private String mUrl;
@@ -53,6 +53,17 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
 
     private OnDownloadListener mOnDownloadListener;
     private OnDownloadListener mOnNotificationDownloadListener;
+
+    public static String UP_DESC = "最新版本：%1$s\n新版本大小：%2$s\n\n更新内容\n%3$s";
+    public static String UP_TITLE = "应用更新";
+    public static String UP_FORCE_INFO = "您需要更新应用才能继续使用\n\n%s";
+    public static String UP_CONFIRM = "确定";
+    public static String UP_IMMEDIATE = "立即更新";
+    public static String UP_LATER = "以后再说";
+    public static String UP_IGNORE = "忽略该版";
+    public static String UP_DOWNLOADING = "下载中...";
+    public static String UP_DOWN_TITLE = "下载中 - %s";
+
 
     public UpdateAgent(Context context, String url, boolean isManual, boolean isWifiOnly, int notifyId) {
         mContext = context.getApplicationContext();
@@ -194,7 +205,6 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
     }
 
 
-
     void doCheck() {
         new AsyncTask<String, Void, Void>() {
             @Override
@@ -298,11 +308,11 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
             }
             final UpdateInfo info = agent.getInfo();
             String size = Formatter.formatShortFileSize(mContext, info.size);
-            String content = String.format("最新版本：%1$s\n新版本大小：%2$s\n\n更新内容\n%3$s", info.versionName, size, info.updateContent);
+            String content = String.format(UP_DESC, info.versionName, size, info.updateContent);
 
             final AlertDialog dialog = new AlertDialog.Builder(mContext).create();
 
-            dialog.setTitle("应用更新");
+            dialog.setTitle(UP_TITLE);
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
 
@@ -320,14 +330,14 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
             DialogInterface.OnClickListener listener = new DefaultPromptClickListener(agent, true);
 
             if (info.isForce) {
-                tv.setText("您需要更新应用才能继续使用\n\n" + content);
-                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", listener);
+                tv.setText(String.format(UP_FORCE_INFO, content));
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, UP_CONFIRM, listener);
             } else {
                 tv.setText(content);
-                dialog.setButton(DialogInterface.BUTTON_POSITIVE, "立即更新", listener);
-                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "以后再说", listener);
+                dialog.setButton(DialogInterface.BUTTON_POSITIVE, UP_IMMEDIATE, listener);
+                dialog.setButton(DialogInterface.BUTTON_NEGATIVE, UP_LATER, listener);
                 if (info.isIgnorable) {
-                    dialog.setButton(DialogInterface.BUTTON_NEUTRAL, "忽略该版", listener);
+                    dialog.setButton(DialogInterface.BUTTON_NEUTRAL, UP_IGNORE, listener);
                 }
             }
             dialog.show();
@@ -362,7 +372,7 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
             if (mContext instanceof Activity && !((Activity) mContext).isFinishing()) {
                 ProgressDialog dialog = new ProgressDialog(mContext);
                 dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                dialog.setMessage("下载中...");
+                dialog.setMessage(UP_DOWNLOADING);
                 dialog.setIndeterminate(false);
                 dialog.setCancelable(false);
                 dialog.show();
@@ -399,8 +409,8 @@ class UpdateAgent implements ICheckAgent, IUpdateAgent, IDownloadAgent {
         @Override
         public void onStart() {
             if (mBuilder == null) {
-                String title = "下载中 - " + mContext.getString(mContext.getApplicationInfo().labelRes);
-                mBuilder = new NotificationCompat.Builder(mContext);
+                String title = String.format(UP_DOWN_TITLE, mContext.getString(mContext.getApplicationInfo().labelRes));
+                mBuilder = new NotificationCompat.Builder(mContext, "");
                 mBuilder.setOngoing(true)
                         .setAutoCancel(false)
                         .setPriority(Notification.PRIORITY_MAX)
