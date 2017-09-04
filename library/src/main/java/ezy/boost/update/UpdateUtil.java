@@ -91,7 +91,10 @@ public class UpdateUtil {
     public static void ensureExternalCacheDir(Context context) {
         File file = context.getExternalCacheDir();
         if (file == null) {
-            file = new File(context.getExternalFilesDir("").getParentFile(), "cache");
+            File extFile = context.getExternalFilesDir("");
+            if (extFile != null) {
+                file = new File(extFile.getParentFile(), "cache");
+            }
         }
         if (file != null) {
             file.mkdirs();
