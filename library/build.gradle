@@ -38,10 +38,10 @@ android {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.android.support:support-annotations:${project.ANDROID_SUPPORT_VERSION}"
-    compile "com.android.support:support-v4:${project.ANDROID_SUPPORT_VERSION}"
-    compile "com.android.support:appcompat-v7:${project.ANDROID_SUPPORT_VERSION}"
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "com.android.support:support-annotations:${project.ANDROID_SUPPORT_VERSION}"
+    api "com.android.support:support-v4:${project.ANDROID_SUPPORT_VERSION}"
+    api "com.android.support:appcompat-v7:${project.ANDROID_SUPPORT_VERSION}"
 }
 
 
