@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-//apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.czy1121'
 version='1.1.1'
@@ -9,7 +9,7 @@ android {
     compileSdkVersion project.ANDROID_BUILD_SDK_VERSION as Integer
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
-    compileOptions {
+compileOptions {
         encoding "UTF-8"
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -29,23 +29,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    lintOptions {
-        checkReleaseBuilds true
-        disable 'MissingTranslation'
-        abortOnError false
-    }
 }
 
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     api "com.android.support:support-annotations:${project.ANDROID_SUPPORT_VERSION}"
     api "com.android.support:support-v4:${project.ANDROID_SUPPORT_VERSION}"
     api "com.android.support:appcompat-v7:${project.ANDROID_SUPPORT_VERSION}"
 }
 
 
- //build a jar with source files
+// build a jar with source files
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
