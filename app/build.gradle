@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion project.ANDROID_BUILD_SDK_VERSION as Integer
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "ezy.demo.update"
-        minSdkVersion 16
-        targetSdkVersion 24
+        minSdkVersion project.ANDROID_BUILD_MIN_SDK_VERSION
+        targetSdkVersion project.ANDROID_BUILD_TARGET_SDK_VERSION
         versionCode 1
         versionName "1.0"
 
@@ -25,7 +25,7 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':library')
-    compile 'com.android.support:appcompat-v7:25.+'
-    compile 'com.android.support:gridlayout-v7:25.+'
-    compile 'com.android.support:design:25.+'
+    compile "com.android.support:appcompat-v7:${project.ANDROID_SUPPORT_VERSION}"
+    compile "com.android.support:gridlayout-v7:${project.ANDROID_SUPPORT_VERSION}"
+    compile "com.android.support:design:${project.ANDROID_SUPPORT_VERSION}"
 }
